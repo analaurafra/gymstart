@@ -5,7 +5,18 @@ from sqlalchemy import text
 st.set_page_config(page_title="Gestão Academia", page_icon="🏋️", layout="centered")
 
 # Conexão com o Banco de Dados Neon (lê o secrets.toml automaticamente)
-conn = st.connection("postgresql", type="sql")
+
+import os
+
+# Tenta pegar a URL do Render, se não achar, usa a string padrão
+db_url = os.environ.get("ST_CONNECTIONS_POSTGRESQL_URL") or os.environ.get("STREAMLIT_CONNECTIONS_POSTGRESQL_URL")
+
+if db_url:
+    # Passa a conexão diretamente via código (kwargs)
+    conn = st.connection("postgresql", type="sql", url=db_url)
+else:
+    # Fallback para quando você estiver rodando localmente com secrets.toml
+    conn = st.connection("postgresql", type="sql")
 
 st.title("🏋️ Painel Administrativo - Academia")
 st.markdown("---")
