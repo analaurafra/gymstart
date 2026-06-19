@@ -2,6 +2,7 @@ import streamlit as st
 import google.generativeai as genai
 from sqlalchemy import text
 import re
+import os
 
 st.set_page_config(page_title="Assistente IA", page_icon="🤖", layout="wide")
 
@@ -20,16 +21,25 @@ except Exception as e:
 # Conexão com o banco Neon
 # conn = st.connection("postgresql", type="sql")
 
-import os
-import streamlit as st
+
 
 # Pega a URL configurada no Render ou local
-db_url = os.environ.get("STREAMLIT_CONNECTIONS_POSTGRESQL_URL") or os.environ.get("ST_CONNECTIONS_POSTGRESQL_URL")
+# db_url = os.environ.get("STREAMLIT_CONNECTIONS_POSTGRESQL_URL") or os.environ.get("ST_CONNECTIONS_POSTGRESQL_URL")
 
-if db_url:
-    conn = st.connection("postgresql", type="sql", url=db_url)
+# if db_url:
+  #  conn = st.connection("postgresql", type="sql", url=db_url)
+# else:
+  #  conn = st.connection("postgresql", type="sql")
+
+# 1. Tenta pegar a chave do Render (Variável de Ambiente)
+# 2. Se não achar, tenta pegar do secrets.toml (Local)
+api_key = os.environ.get("GEMINI_API_KEY") or st.secrets.get("GEMINI_API_KEY")
+
+if api_key:
+    genai.configure(api_key=api_key)
 else:
-    conn = st.connection("postgresql", type="sql")
+    st.error("Chave de API do Gemini não encontrada. Configure-a no Render ou no secrets.toml.")
+
 
 # 2. O SYSTEM PROMPT: Explicando as tabelas e regras de segurança para a IA
 SCHEMA_SISTEMA = """
