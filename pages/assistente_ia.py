@@ -21,24 +21,32 @@ except Exception as e:
 # Conexão com o banco Neon
 # conn = st.connection("postgresql", type="sql")
 
+# =====================================================================
+# 1. CONFIGURAÇÃO DO BANCO DE DADOS (PostgreSQL)
+# =====================================================================
+# Busca a URL do banco nas variáveis do Render ou no ambiente local
+db_url = os.environ.get("STREAMLIT_CONNECTIONS_POSTGRESQL_URL") or os.environ.get("ST_CONNECTIONS_POSTGRESQL_URL")
+
+if db_url:
+    # Se estiver no Render, conecta usando a URL explícita
+    conn = st.connection("postgresql", type="sql", url=db_url)
+else:
+    # Se estiver local, busca automaticamente do .streamlit/secrets.toml
+    conn = st.connection("postgresql", type="sql")
 
 
-# Pega a URL configurada no Render ou local
-# db_url = os.environ.get("STREAMLIT_CONNECTIONS_POSTGRESQL_URL") or os.environ.get("ST_CONNECTIONS_POSTGRESQL_URL")
-
-# if db_url:
-  #  conn = st.connection("postgresql", type="sql", url=db_url)
-# else:
-  #  conn = st.connection("postgresql", type="sql")
-
-# 1. Tenta pegar a chave do Render (Variável de Ambiente)
-# 2. Se não achar, tenta pegar do secrets.toml (Local)
+# =====================================================================
+# 2. CONFIGURAÇÃO DA INTELIGÊNCIA ARTIFICIAL (Gemini)
+# =====================================================================
+# Busca a chave de API no Render ou no secrets.toml local
 api_key = os.environ.get("GEMINI_API_KEY") or st.secrets.get("GEMINI_API_KEY")
 
 if api_key:
     genai.configure(api_key=api_key)
 else:
     st.error("Chave de API do Gemini não encontrada. Configure-a no Render ou no secrets.toml.")
+
+
 
 
 # 2. O SYSTEM PROMPT: Explicando as tabelas e regras de segurança para a IA
