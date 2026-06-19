@@ -18,7 +18,18 @@ except Exception as e:
     st.stop()
 
 # Conexão com o banco Neon
-conn = st.connection("postgresql", type="sql")
+# conn = st.connection("postgresql", type="sql")
+
+import os
+import streamlit as st
+
+# Pega a URL configurada no Render ou local
+db_url = os.environ.get("STREAMLIT_CONNECTIONS_POSTGRESQL_URL") or os.environ.get("ST_CONNECTIONS_POSTGRESQL_URL")
+
+if db_url:
+    conn = st.connection("postgresql", type="sql", url=db_url)
+else:
+    conn = st.connection("postgresql", type="sql")
 
 # 2. O SYSTEM PROMPT: Explicando as tabelas e regras de segurança para a IA
 SCHEMA_SISTEMA = """
