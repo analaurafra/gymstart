@@ -303,4 +303,4 @@ For questions or support, please reach out to:
 
 ---
 
-**Happy Coding! 💪**
+**Happy Coding! 💪 💪**
