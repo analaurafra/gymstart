@@ -2,9 +2,16 @@
 
 A comprehensive gym management system built with Streamlit and PostgreSQL, designed to streamline administrative operations for fitness facilities.
 
+
+![Demonstração do Assistente](/img/gymstart_ai_assitant_scream.png)
+
+
 ## Overview
 
 GymStart is a web-based administrative panel that helps gym staff manage students (members), employees, equipment inventory, payments, and purchases efficiently. The application leverages Streamlit for rapid development and Neon PostgreSQL for reliable data management.
+
+
+![Demonstração do Assistente](/img/streamlit-app-2026-06-21-11-10-56-ezgif.com-video-to-gif-converter.gif)
 
 ## Features
 
@@ -265,7 +272,33 @@ ModuleNotFoundError: No module named 'streamlit'
 
 The system prevents duplicate CPF entries. If you encounter this error, verify the CPF hasn't been registered previously.
 
+---
+
+## 🚀 Deploying to Render Cloud
+
+To make this application available in production on Render, use the following configuration settings:
+
+### 1. Web Service Initial Settings
+* **Runtime:** `Python`
+* **Build Command:** `pip install -r requirements.txt`
+* **Start Command:** `streamlit run app.py --server.port $PORT --server.address 0.0.0.0`
+  > ⚠️ **Important:** Replace `app.py` with your actual main file name if it uses a different name (e.g., `Home.py`). Since this project uses Streamlit, **do not** use `gunicorn` or `uvicorn`. The startup command must call `streamlit run` directly.
+
+### 2. Environment Variables
+In the Render dashboard, navigate to the **Environment** tab and add the following mandatory keys:
+
+| Key | Description |
+| :--- | :--- |
+| `GEMINI_API_KEY` | Your secret Google Gemini API key (generated in Google AI Studio). |
+| `STREAMLIT_CONNECTIONS_POSTGRESQL_URL` | Your PostgreSQL database connection string/URI (e.g., Neon DB). |
+
+### 3. Key Development Details
+* **Secrets Management:** The codebase is designed to run seamlessly in both local and production environments. Locally, it fetches credentials from the `.streamlit/secrets.toml` file. On Render, it automatically uses the environment variables configured in the dashboard, preventing startup failures or page crashes.
+* **Library Versioning:** Ensure your `requirements.txt` file includes an updated version of the Gemini SDK to prevent "model not found" errors:
+  ```text
+  google-generativeai>=0.8.0
 ## Contributing
+
 
 Contributions are welcome! To contribute:
 

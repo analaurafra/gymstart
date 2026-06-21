@@ -2,6 +2,7 @@ import streamlit as st
 import google.generativeai as genai
 from sqlalchemy import text
 import re
+import os
 
 st.set_page_config(page_title="Assistente IA", page_icon="🤖", layout="wide")
 
@@ -9,16 +10,39 @@ st.title("🤖 Assistente de Inteligência Artificial")
 st.markdown("Faça perguntas em linguagem natural sobre os dados da academia (ex: *'Quantos alunos ativos temos?'* ou *'Qual o faturamento?'*).")
 st.markdown("---")
 
-# 1. Configuração da API do Gemini (Lendo a chave do secrets.toml)
-try:
-    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-    model = genai.GenerativeModel('gemini-2.5-flash')
-except Exception as e:
-    st.error("Erro ao configurar a chave de API do Gemini no secrets.toml.")
-    st.stop()
+# >>> O BLOCO ANTIGO QUE ESTAVA AQUI FOI REMOVIDO PARA NÃO TRAVAR O RENDER <<<
 
-# Conexão com o banco Neon
-conn = st.connection("postgresql", type="sql")
+# =====================================================================
+# 1. CONFIGURAÇÃO DO BANCO DE DADOS (PostgreSQL)
+# =====================================================================
+db_url = os.environ.get("STREAMLIT_CONNECTIONS_POSTGRESQL_URL") or os.environ.get("ST_CONNECTIONS_POSTGRESQL_URL")
+
+if db_url:
+    conn = st.connection("postgresql", type="sql", url=db_url)
+else:
+    conn = st.connection("postgresql", type="sql")
+
+
+# =====================================================================
+# 2. CONFIGURAÇÃO DA INTELIGÊNCIA ARTIFICIAL (Gemini)
+# =====================================================================
+api_key = os.environ.get("GEMINI_API_KEY")
+
+if not api_key:
+    try:
+        if "GEMINI_API_KEY" in st.secrets:
+            api_key = st.secrets["GEMINI_API_KEY"]
+    except Exception:
+        api_key = None
+
+if api_key:
+    try:
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel('gemini-2.5-flash') # Ou 'gemini-2.5-flash' se preferir manter o mais novo
+    except Exception as e:
+        st.error(f"Erro ao inicializar o SDK do Gemini: {e}")
+else:
+    st.error("Chave GEMINI_API_KEY não foi encontrada no Render (Environment) nem no secrets.toml local.")
 
 # 2. O SYSTEM PROMPT: Explicando as tabelas e regras de segurança para a IA
 SCHEMA_SISTEMA = """

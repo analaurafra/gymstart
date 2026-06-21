@@ -3,7 +3,18 @@ from sqlalchemy import text
 
 st.set_page_config(page_title="Financeiro", page_icon="💰", layout="wide")
 
-conn = st.connection("postgresql", type="sql")
+# conn = st.connection("postgresql", type="sql")
+
+import os
+import streamlit as st
+
+# Pega a URL configurada no Render ou local
+db_url = os.environ.get("STREAMLIT_CONNECTIONS_POSTGRESQL_URL") or os.environ.get("ST_CONNECTIONS_POSTGRESQL_URL")
+
+if db_url:
+    conn = st.connection("postgresql", type="sql", url=db_url)
+else:
+    conn = st.connection("postgresql", type="sql")
 
 st.title("💰 Gestão Financeira")
 st.markdown("Fluxo de caixa: Registro de mensalidades recebidas e despesas da unidade.")
