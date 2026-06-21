@@ -2,9 +2,16 @@
 
 A comprehensive gym management system built with Streamlit and PostgreSQL, designed to streamline administrative operations for fitness facilities.
 
+
+![Demonstração do Assistente](/img/gymstart_ai_assitant_scream.png)
+
+
 ## Overview
 
 GymStart is a web-based administrative panel that helps gym staff manage students (members), employees, equipment inventory, payments, and purchases efficiently. The application leverages Streamlit for rapid development and Neon PostgreSQL for reliable data management.
+
+
+![Demonstração do Assistente](/img/streamlit-app-2026-06-21-11-10-56-ezgif.com-video-to-gif-converter.gif)
 
 ## Features
 
