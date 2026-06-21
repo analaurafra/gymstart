@@ -39,14 +39,38 @@ else:
 # 2. CONFIGURAÇÃO DA INTELIGÊNCIA ARTIFICIAL (Gemini)
 # =====================================================================
 # Busca a chave de API no Render ou no secrets.toml local
-api_key = os.environ.get("GEMINI_API_KEY") or st.secrets.get("GEMINI_API_KEY")
 
+# api_key = os.environ.get("GEMINI_API_KEY") or st.secrets.get("GEMINI_API_KEY")
+
+# if api_key:
+    # genai.configure(api_key=api_key)
+# else:
+#     st.error("Chave de API do Gemini não encontrada. Configure-a no Render ou no secrets.toml.")
+
+# =====================================================================
+# 2. CONFIGURAÇÃO DA INTELIGÊNCIA ARTIFICIAL (Gemini)
+# =====================================================================
+# 1. Tenta pegar primeiro das Variáveis de Ambiente do Render
+api_key = os.environ.get("GEMINI_API_KEY")
+
+# 2. Se não encontrar, tenta ler do secrets local com segurança (evita quebrar no Render)
+if not api_key:
+    try:
+        if "GEMINI_API_KEY" in st.secrets:
+            api_key = st.secrets["GEMINI_API_KEY"]
+    except Exception:
+        api_key = None
+
+# 3. Inicializa e valida a API do Google
 if api_key:
-    genai.configure(api_key=api_key)
+    try:
+        genai.configure(api_key=api_key)
+        # Cria o modelo para uso na página
+        model = genai.GenerativeModel('gemini-1.5-flash')
+    except Exception as e:
+        st.error(f"Erro ao inicializar o SDK do Gemini: {e}")
 else:
-    st.error("Chave de API do Gemini não encontrada. Configure-a no Render ou no secrets.toml.")
-
-
+    st.error("Chave GEMINI_API_KEY não foi encontrada no Render (Environment) nem no secrets.toml local.")
 
 
 # 2. O SYSTEM PROMPT: Explicando as tabelas e regras de segurança para a IA
