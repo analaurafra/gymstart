@@ -1,9 +1,20 @@
 import streamlit as st
+import os
 from sqlalchemy import text
+
 
 st.set_page_config(page_title="Gerenciar Funcionários", page_icon="💼", layout="wide")
 
-conn = st.connection("postgresql", type="sql")
+# conn = st.connection("postgresql", type="sql")
+
+
+# Pega a URL configurada no Render ou local
+db_url = os.environ.get("STREAMLIT_CONNECTIONS_POSTGRESQL_URL") or os.environ.get("ST_CONNECTIONS_POSTGRESQL_URL")
+
+if db_url:
+    conn = st.connection("postgresql", type="sql", url=db_url)
+else:
+    conn = st.connection("postgresql", type="sql")
 
 st.title("💼 Gestão de Funcionários")
 st.markdown("Cadastre novos membros da equipe ou consulte os colaboradores ativos.")
